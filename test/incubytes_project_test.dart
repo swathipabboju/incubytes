@@ -34,6 +34,13 @@ void main() {
   });
 
   test('negative number throws with message including negatives', () {
+   
+   
+  
+    expect(
+      () => add('-8'),
+      throwsA(predicate((e) => e.toString().contains('negative numbers not allowed -8'))),
+    );
     expect(
       () => add('1,-2,3'),
       throwsA(predicate((e) => e.toString().contains('negative numbers not allowed -2'))),
@@ -50,7 +57,7 @@ void main() {
     );
     expect(
       () => add('//>\n-2>7'),
-      throwsA(predicate((e) => e.toString().contains('-1') && e.toString().contains('-2'))),
+      throwsA(predicate((e) =>  e.toString().contains('-2'))),
     );
   });
 
