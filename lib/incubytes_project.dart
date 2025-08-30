@@ -1,19 +1,30 @@
 int add(String input) {
+  try {
+
   if (input.isEmpty) return 0; // Implemented logic for empty string
 
   if ((input.length == 1) && (RegExp(r'^\d+$').hasMatch(input))) {
     int.tryParse(input) ?? 0; // Implemented logic for single number
   }
   // Case: default delimiters (comma or newline)
+ if (input.trim().isEmpty) {
+    throw FormatException("Input cannot be empty or spaces only");
+  }
+
+  // check if at least one digit exists
+  if (!RegExp(r'\d').hasMatch(input)) {
+    throw FormatException("Input must contain at least one number");
+  }
+
+// case : default delimiters: , and \n
   if (!input.startsWith("//")) {
     final parts = input
-        .split(RegExp(r'[,\n]')) // only , and \n by default
+        .split(RegExp(r'[,\n]')) // default delimiters: , and \n
         .where((e) => e.isNotEmpty)
         .map(int.parse)
         .toList();
 
-    var r = parts.reduce((a, b) => a + b);
-    return r;
+    return parts.reduce((a, b) => a + b);
   }
 
   //Case: custom delimiter format -> starts with //
@@ -54,7 +65,14 @@ int add(String input) {
     }
 
     return numbers.reduce((a, b) => a + b);
+    
   }
-
-  return 0;
+   return 0;
+ 
+}
+catch (e) {
+  
+    print('Error: $e'); // only show the error message, no stack trace
+     return 0;
+  }
 }
