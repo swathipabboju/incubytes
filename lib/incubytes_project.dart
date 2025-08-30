@@ -31,31 +31,30 @@ int add(String input) {
     // Validate and check for negative numbers
     _validateNegatives(numbers);
 
-    // Calculate and return the sum
-    return numbers.reduce((a, b) => a + b);
+    // Filter out numbers greater than 1000
+    final validNumbers = numbers.where((n) => n <= 1000).toList();
 
+    return validNumbers.reduce((a, b) => a + b);
   } catch (e) {
     print('invalid input!! $e');
     rethrow;
   }
 }
 
-/// A private helper function to parse numbers from a string
+//helper function to parse numbers from a string
 List<int> _parseNumbers(String numbersPart, String delimiter) {
   return numbersPart
       .split(RegExp(delimiter))
       .where((s) => s.isNotEmpty)
       .map((s) {
-        return int.parse(s);
-      })
-      .toList();
+    return int.parse(s);
+  }).toList();
 }
 
-/// A private helper function to check for negative numbers and throw an exception
+// helper function to check for negative numbers and throw an exception
 void _validateNegatives(List<int> numbers) {
   final negatives = numbers.where((n) => n < 0).toList();
   if (negatives.isNotEmpty) {
     throw Exception("negative numbers not allowed ${negatives.join(",")}");
   }
 }
-

@@ -61,19 +61,12 @@ void main() {
     );
   });
 
- 
-
-  // test('Throws exception for multiple negative numbers', () {
-  //   expect(
-  //       () => add("//;\n-1;-2;-3"),
-  //       throwsA(predicate((e) =>
-  //           e is Exception &&
-  //           e.toString().contains("negative numbers not allowed -1,-2,-3"))));
-  // });
+ test('numbers bigger than 1000 are ignored', () {
+  expect(add('2,1001'), equals(2));
+  expect(add('1000,2,1001'), equals(1002));
+  expect(add('//;\n2;1001;1002;3'), equals(5));
+});
 
   
- // test('Custom delimiter "-"', () {
-  //   expect(add("//-\n10-20-30"), equals(60));
-  // });
   
 }
