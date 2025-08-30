@@ -1,37 +1,50 @@
 int add(String input) {
   try {
-    // Handling empty or whitespace-only strings
     if (input.trim().isEmpty) {
       return 0;
     }
 
-    // Determine numbers and delimiter based on the input format
     List<int> numbers;
     String numbersPart;
+    String delimiter;
 
-    if (input.startsWith("//")) {
-      // Custom delimiter format (e.g., "//;\n1;2;3")
-      if (input.length < 4 || input[3] != '\n') {
-        throw Exception("Invalid input: missing newline after delimiter");
+    if (input.startsWith("//[")) {
+      // New custom delimiter format (e.g., "//[***]\n1***2***3")
+
+      // Find the position of the closing bracket and newline
+      final endBracket = input.indexOf(']\n');
+      print(endBracket);
+
+      // If not found, the format is invalid
+      if (endBracket == -1) {
+        throw Exception("Invalid input: custom delimiter format missing ']\n'");
       }
 
-      String delimiter = input[2];
-      if (RegExp(r'^\d+$').hasMatch(delimiter)) {
-        throw Exception("Digit delimiters are not allowed: $delimiter");
-      }
+      // The delimiter is the text between "//[" and "]\n"
+      delimiter = RegExp.escape(input.substring(3, endBracket));
 
-      numbersPart = input.substring(4);
+      // The numbers start right after "]\n"
+      numbersPart = input.substring(endBracket + 2);
+
+      // Parse the numbers using the extracted delimiter
       numbers = _parseNumbers(numbersPart, delimiter);
+    } else if (input.startsWith("//")) {
+      // Old custom single-character delimiter format
+      if (input.length < 4 || input[3] != '\n') {
+        throw Exception(
+            "Invalid input: missing newline after single-character delimiter");
+      }
+      delimiter = input[2];
+      numbersPart = input.substring(4);
+      numbers = _parseNumbers(numbersPart, RegExp.escape(delimiter));
     } else {
       // Default delimiters (comma and newline)
       numbersPart = input;
       numbers = _parseNumbers(numbersPart, r'[,\n]');
     }
 
-    // Validate and check for negative numbers
     _validateNegatives(numbers);
 
-    // Filter out numbers greater than 1000
     final validNumbers = numbers.where((n) => n <= 1000).toList();
 
     return validNumbers.reduce((a, b) => a + b);
@@ -41,7 +54,7 @@ int add(String input) {
   }
 }
 
-//helper function to parse numbers from a string
+// helper function to parse numbers from a string
 List<int> _parseNumbers(String numbersPart, String delimiter) {
   return numbersPart
       .split(RegExp(delimiter))

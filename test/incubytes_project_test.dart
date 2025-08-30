@@ -34,9 +34,6 @@ void main() {
   });
 
   test('negative number throws with message including negatives', () {
-   
-   
-  
     expect(
       () => add('-8'),
       throwsA(predicate((e) => e.toString().contains('negative numbers not allowed -8'))),
@@ -67,6 +64,13 @@ void main() {
   expect(add('//;\n2;1001;1002;3'), equals(5));
 });
 
+
+test('multi-character custom delimiter', () {
+  expect(add('//[***]\n1***2***3'), equals(6));
+  expect(add('//[abc]\n1abc2abc3'), equals(6));
+  expect(() => add('//[###]\n10###20###-30'), throwsA(predicate((e) => e.toString().contains('negative numbers not allowed -30'))));
+  expect(add('//[del]\n1del1001del2'), equals(3));
+});
   
   
 }
