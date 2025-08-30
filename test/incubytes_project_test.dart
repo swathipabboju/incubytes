@@ -9,11 +9,8 @@ void main() {
   test("single digit ", () {
     expect(add("6"), 6);
   });
-
-  test("any amount of numbers seperated by commas", () {
-    expect(add("6,1,3"), 10);
-  });
-
+ 
+ 
   test("any amount of numbers seperated by commas", () {
     expect(add("6,1,3"), 10);
   });
@@ -25,59 +22,39 @@ void main() {
     expect(add('1\n2\n3'), equals(6));
   });
 
-  test('sums numbers with mixed delimiters', () {
-    expect(add('1,2\n3;4-5 6|7'), equals(28));
+  test('Custom delimiter ";"', () {
+    expect(add("//;\n1;2;3"), equals(6));
   });
 
-  test('ignores empty values between delimiters', () {
-    expect(add('1,,2\n\n3'), equals(6));
+  test('Custom delimiter "-"', () {
+    expect(add("//-\n10-20-30"), equals(60));
   });
 
-  test('works with single-digit numbers and spaces', () {
-    expect(add(' 1 2 3 '), equals(6));
-  });
-  test('sums multiple numbers with custom delimiter', () {
-    expect(add('//1;2;3'), equals(6));
+  test('Custom delimiter with multi-digit numbers', () {
+    expect(add("//;\n81;9;10"), equals(100));
   });
 
-  test('trims first 2 characters correctly', () {
-    expect(add('//4;5;6'), equals(15));
-  });
-
-  test('ignores empty values between delimiters', () {
-    expect(add('//1;;2;3'), equals(6));
-  });
-
-  test('works with single number', () {
-    expect(add('//7'), equals(7));
-  });
-
-  test('returns 0 if input starts with // but has no numbers', () {
-    expect(add('//'), equals(0));
-    expect(add('///'), equals(0));
-  });
-
-  test('handles numbers with spaces (ignored)', () {
-    expect(add('//1; 2;3'), equals(6));
-  });
-  test('throws exception for single negative number', () {
+  test('Throws exception for negative numbers', () {
     expect(
-        () => add('-5'),
+        () => add("//;\n1;-2;3"),
         throwsA(predicate((e) =>
             e is Exception &&
-            e.toString() == 'Exception: negative numbers not allowed -5')));
+            e.toString().contains("negative numbers not allowed -2"))));
   });
 
-  test('throws exception for multiple negative numbers', () {
+  test('Throws exception for multiple negative numbers', () {
     expect(
-        () => add('1,-2,3,-4'),
+        () => add("//;\n-1;-2;-3"),
         throwsA(predicate((e) =>
             e is Exception &&
-            e.toString() == 'Exception: negative numbers not allowed -2,-4')));
+            e.toString().contains("negative numbers not allowed -1,-2,-3"))));
   });
 
-  test('returns 0 if input has no digits', () {
-    expect(add('abc'), equals(0));
-    expect(add('///;;;'), equals(0));
+  test('Invalid custom delimiter definition (missing newline)', () {
+    expect(() => add("//;\t1;2"), throwsException);
+  });
+
+  test('Empty number between delimiters should throw exception', () {
+    expect(() => add("//;\n1;;2"), throwsException);
   });
 }
